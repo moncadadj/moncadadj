@@ -140,11 +140,13 @@ nav.scrolled {
   height: 28px;
   object-fit: contain;
   display: block;
-  transition: transform 0.2s ease;
+  filter: brightness(0) saturate(100%) invert(75%) sepia(35%) saturate(700%) hue-rotate(358deg) brightness(98%) contrast(92%);
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .nav-logo:hover .nav-logo-img {
   transform: scale(1.08);
+  filter: brightness(0) saturate(100%) invert(90%) sepia(20%) saturate(1000%) hue-rotate(358deg) brightness(105%) contrast(100%);
 }
 .nav-links {
   display: flex;
