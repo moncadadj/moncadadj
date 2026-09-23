@@ -100,11 +100,10 @@
   });
 })();
 
-// ── HERO ATMOSPHERIC CANVAS PARTICLES ────────────────────────────
-(function initHeroParticles() {
-  const canvas = document.getElementById('heroCanvas');
-  const heroSection = document.getElementById('hero');
-  if (!canvas || !heroSection) return;
+// ── GLOBAL ATMOSPHERIC BACKGROUND CANVAS PARTICLES ────────────────
+(function initGlobalParticles() {
+  const canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -118,12 +117,10 @@
   let animationFrameId = null;
   let lastTime = 0;
   let pointer = { x: -9999, y: -9999, active: false };
-  let isHeroVisible = true;
 
   function resizeCanvas() {
-    const rect = heroSection.getBoundingClientRect();
-    width = rect.width;
-    height = rect.height;
+    width = window.innerWidth;
+    height = window.innerHeight;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     canvas.width = width * dpr;
@@ -134,53 +131,55 @@
   }
 
   function createParticles() {
-    // Bound particle count by hero area (80 to 140 particles max)
+    // Density tuned: 220 to 360 particles within desktop viewport
     const area = width * height;
-    const count = Math.min(140, Math.max(70, Math.floor(area / 10000)));
+    const baseCount = Math.floor(area / 4200);
+    const count = Math.min(360, Math.max(140, baseCount));
 
     particles = [];
     for (let i = 0; i < count; i++) {
+      const randType = Math.random();
+      let colorType = 'charcoal';
+      if (randType < 0.35) colorType = 'gold';
+      else if (randType < 0.55) colorType = 'ivory';
+
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        size: Math.random() * 1.8 + 0.6,
-        baseAlpha: Math.random() * 0.35 + 0.15,
-        colorType: Math.random() < 0.25 ? 'gold' : 'charcoal'
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        size: Math.random() * 2.2 + 0.8,
+        baseAlpha: Math.random() * 0.4 + 0.2,
+        colorType: colorType
       });
     }
   }
 
   function updateAndDraw(timestamp) {
     if (!lastTime) lastTime = timestamp;
-    const dt = Math.min((timestamp - lastTime) / 1000, 0.1); // Cap delta time
+    const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
     lastTime = timestamp;
 
     ctx.clearRect(0, 0, width, height);
 
     if (prefersReducedMotion.matches) {
-      // Draw static particles frame without animation
       particles.forEach(p => drawParticle(p, p.baseAlpha));
       return;
     }
 
-    const vortexRadius = 220;
+    const vortexRadius = 260;
 
     particles.forEach(p => {
-      // Gentle drift physics
       p.x += p.vx * dt * 60;
       p.y += p.vy * dt * 60;
 
-      // Wrap around edges
-      if (p.x < -10) p.x = width + 10;
-      if (p.x > width + 10) p.x = -10;
-      if (p.y < -10) p.y = height + 10;
-      if (p.y > height + 10) p.y = -10;
+      if (p.x < -15) p.x = width + 15;
+      if (p.x > width + 15) p.x = -15;
+      if (p.y < -15) p.y = height + 15;
+      if (p.y > height + 15) p.y = -15;
 
       let currentAlpha = p.baseAlpha;
 
-      // Pointer vortex interaction when pointer is active
       if (pointer.active) {
         const dx = pointer.x - p.x;
         const dy = pointer.y - p.y;
@@ -189,23 +188,22 @@
 
         if (dist > 0.001 && dist < vortexRadius) {
           const force = (1 - dist / vortexRadius);
-          // Tangential vortex rotation + gentle inward pull
           const nx = dx / dist;
           const ny = dy / dist;
           const tx = -ny;
           const ty = nx;
 
-          p.x += (tx * force * 1.2 + nx * force * 0.4) * dt * 60;
-          p.y += (ty * force * 1.2 + ny * force * 0.4) * dt * 60;
+          p.x += (tx * force * 1.8 + nx * force * 0.6) * dt * 60;
+          p.y += (ty * force * 1.8 + ny * force * 0.6) * dt * 60;
 
-          currentAlpha = Math.min(1.0, p.baseAlpha + force * 0.5);
+          currentAlpha = Math.min(1.0, p.baseAlpha + force * 0.55);
         }
       }
 
       drawParticle(p, currentAlpha);
     });
 
-    if (isHeroVisible && !document.hidden) {
+    if (!document.hidden) {
       animationFrameId = requestAnimationFrame(updateAndDraw);
     }
   }
@@ -215,8 +213,10 @@
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     if (p.colorType === 'gold') {
       ctx.fillStyle = `rgba(201, 168, 76, ${alpha})`;
+    } else if (p.colorType === 'ivory') {
+      ctx.fillStyle = `rgba(245, 240, 232, ${alpha * 0.85})`;
     } else {
-      ctx.fillStyle = `rgba(200, 190, 168, ${alpha * 0.7})`;
+      ctx.fillStyle = `rgba(200, 190, 168, ${alpha * 0.75})`;
     }
     ctx.fill();
   }
@@ -237,7 +237,6 @@
     }
   }
 
-  // Event Listeners
   window.addEventListener('resize', () => {
     resizeCanvas();
     if (prefersReducedMotion.matches) {
@@ -246,38 +245,23 @@
   });
 
   if (isFinePointer.matches) {
-    heroSection.addEventListener('pointermove', e => {
-      const rect = heroSection.getBoundingClientRect();
-      pointer.x = e.clientX - rect.left;
-      pointer.y = e.clientY - rect.top;
+    window.addEventListener('pointermove', e => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
       pointer.active = true;
     });
 
-    heroSection.addEventListener('pointerleave', () => {
+    document.addEventListener('pointerleave', () => {
       pointer.active = false;
       pointer.x = -9999;
       pointer.y = -9999;
     });
   }
 
-  // Intersection Observer for pausing off-screen hero animation
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      isHeroVisible = entry.isIntersecting;
-      if (isHeroVisible) {
-        startAnimation();
-      } else {
-        stopAnimation();
-      }
-    });
-  }, { threshold: 0.05 });
-
-  observer.observe(heroSection);
-
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       stopAnimation();
-    } else if (isHeroVisible) {
+    } else {
       startAnimation();
     }
   });
@@ -287,7 +271,6 @@
     startAnimation();
   });
 
-  // Initial setup
   resizeCanvas();
   startAnimation();
 })();

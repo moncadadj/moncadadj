@@ -14,8 +14,8 @@
   --offwht:  #F5F0E8;
   --light:   #C8BEA8;
   --muted:   #7A7060;
-  --font-display: Georgia, serif;
-  --font-body:    'DM Sans', sans-serif;
+  --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono:    'DM Mono', monospace;
 }
 
@@ -28,6 +28,16 @@ body {
   font-size: 16px;
   line-height: 1.6;
   overflow-x: hidden;
+}
+
+/* ── GLOBAL BACKGROUND CANVAS ───────────────────────────────── */
+#bgCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
 }
 
 body.has-custom-cursor {
@@ -150,16 +160,7 @@ nav.scrolled {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  background: var(--black);
-}
-
-#heroCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
+  background: transparent;
 }
 
 .hero-inner {
@@ -192,11 +193,11 @@ nav.scrolled {
 
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 5.5vw, 5.2rem);
-  font-weight: 900;
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  font-weight: 700;
   color: var(--white);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
   margin-bottom: 1rem;
   opacity: 0;
   animation: fadeUp 0.8s ease 0.4s forwards;
@@ -224,10 +225,11 @@ nav.scrolled {
 
 .hero-statement {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  font-weight: 700;
+  font-size: clamp(1.7rem, 2.8vw, 2.5rem);
+  font-weight: 600;
   color: var(--white);
   line-height: 1.25;
+  letter-spacing: -0.02em;
   margin-bottom: 1.2rem;
 }
 
@@ -240,10 +242,10 @@ nav.scrolled {
 .hero-sub {
   font-size: 0.95rem;
   color: var(--light);
-  font-style: italic;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   max-width: 540px;
   line-height: 1.7;
+  letter-spacing: -0.01em;
 }
 
 .hero-meta {
@@ -352,19 +354,20 @@ section {
 
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 4vw, 3.8rem);
-  font-weight: 900;
+  font-size: clamp(2rem, 3.8vw, 3.4rem);
+  font-weight: 700;
   color: var(--white);
-  line-height: 1.1;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   margin-bottom: 1rem;
 }
 
 .section-sub {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--muted);
-  font-style: italic;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   margin-bottom: 4rem;
+  letter-spacing: -0.01em;
 }
 
 /* Reveal animation */
@@ -385,7 +388,8 @@ section {
 
 /* ── 01 POSITIONING ─────────────────────────────────────────── */
 #positioning {
-  background: var(--dark);
+  background: rgba(15, 15, 24, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -471,7 +475,8 @@ section {
 
 /* ── 02 HOW I OPERATE ────────────────────────────────────────── */
 #operate {
-  background: var(--mid);
+  background: rgba(22, 22, 31, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -489,8 +494,8 @@ section {
 
 .operate-number {
   font-family: var(--font-display);
-  font-size: 9rem;
-  font-weight: 900;
+  font-size: 8rem;
+  font-weight: 700;
   color: var(--gold);
   opacity: 0.08;
   line-height: 1;
@@ -500,10 +505,11 @@ section {
 
 .operate-title {
   font-family: var(--font-display);
-  font-size: 2.8rem;
-  font-weight: 900;
+  font-size: 2.6rem;
+  font-weight: 700;
   color: var(--white);
-  line-height: 1.1;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   margin-bottom: 1.5rem;
 }
 
@@ -578,7 +584,8 @@ section {
 
 /* ── 03 EXPERIENCE ───────────────────────────────────────────── */
 #experience {
-  background: var(--dark);
+  background: rgba(15, 15, 24, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -647,7 +654,8 @@ section {
 
 /* ── 04 CASE STUDY ───────────────────────────────────────────── */
 #casestudy {
-  background: var(--black);
+  background: rgba(8, 8, 14, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -747,7 +755,8 @@ section {
 
 /* ── 05 30-DAY SYSTEM ───────────────────────────────────────── */
 #system {
-  background: var(--dark);
+  background: rgba(15, 15, 24, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -832,7 +841,8 @@ section {
 
 /* ── 06 TOOLS ────────────────────────────────────────────────── */
 #tools {
-  background: var(--mid);
+  background: rgba(22, 22, 31, 0.88);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
 }
 
@@ -887,7 +897,8 @@ section {
 
 /* ── 07 CLOSING ─────────────────────────────────────────────── */
 #closing {
-  background: var(--black);
+  background: rgba(8, 8, 14, 0.90);
+  backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
   position: relative;
   overflow: hidden;
@@ -922,10 +933,11 @@ section {
 
 .closing-big {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 900;
+  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+  font-weight: 700;
   color: var(--white);
-  line-height: 1.1;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   margin-bottom: 2rem;
 }
 
